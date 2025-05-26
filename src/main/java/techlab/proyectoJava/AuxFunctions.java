@@ -34,5 +34,15 @@ public class AuxFunctions {
         }
         return num;
     }
+
+    public static class StockInsuficienteException extends RuntimeException {
+        public StockInsuficienteException(String message) {
+            super(message);
+        }
+    }
+
+    public static boolean numIntNegative(int num) {
+        return num <= 0;
+    }
 }
 

@@ -46,12 +46,12 @@ public class Main {
                 case 4 -> crudProduct.deleteProduct();
                 case 5 -> crudProduct.search();
                 case 6 -> {
-                    nuevaOrden = orden.createPedidos(productos);
+                    nuevaOrden = orden.createOrden(productos);
                     ordenes.add(nuevaOrden);
                     System.out.println("Orden creada exitosamente.");
                     orden = new Orden();
                 }
-                case 7 -> orden.listPedidos(nuevaOrden);
+                case 7 -> orden.verOrden(nuevaOrden);
                 case 8 -> orden.listOrdenes(ordenes);
                 case 9-> {
                     System.out.println("Gracias por usar la app!");
