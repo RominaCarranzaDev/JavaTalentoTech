@@ -152,7 +152,11 @@ public class CrudProduct {
                     System.out.print("Ingrese el ID del producto: ");
                     int id = AuxFunctions.leerEntero(sc, sc.nextLine());
                     Product prod = searchById(id);
-                    prod.info();
+                    if( prod != null){
+                        prod.info();
+                    } else {
+                        System.out.printf("Producto con ID %d no encontrado", id);
+                    }
                 }
             case 2 ->
                 {
@@ -161,8 +165,12 @@ public class CrudProduct {
                     String name = sc.nextLine();
 
                     ArrayList<Product> encontrados = searchByName(name);
-                    for (Product pr : encontrados) {
-                        pr.info();
+                    if( encontrados != null) {
+                        for (Product pr : encontrados) {
+                            pr.info();
+                        }
+                    } else {
+                        System.out.println("No se encontró ningún producto con el nombre especificado");
                     }
                 }
             default->
@@ -194,7 +202,7 @@ public class CrudProduct {
         }
 
         if (result.isEmpty()) {
-            System.out.println("No se encontró ningún producto con el nombre especificado");
+            return  null;
         }
         return result;
     }
