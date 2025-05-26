@@ -1,7 +1,7 @@
 package techlab.proyectoJava;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.Scanner;
 
 public class CrudProduct {
@@ -15,11 +15,11 @@ public class CrudProduct {
 
     public void listProducts() {
         System.out.print("""
-                    ============================
-                    === Listado de Productos ===
-                    ============================
-                    
-                    """);
+                ============================
+                === Listado de Productos ===
+                ============================
+                
+                """);
         if (!productos.isEmpty()) {
             for (Product producto : productos) {
                 producto.info();
@@ -31,17 +31,17 @@ public class CrudProduct {
 
     public void addProduct() {
         System.out.print("""
-                    ========================
-                    === Agregar producto ===
-                    ========================
-                    
-                    """);
+                ========================
+                === Agregar producto ===
+                ========================
+                
+                """);
         System.out.print("Ingrese el nombre del producto: ");
         String nombre = sc.nextLine();
         System.out.print("Ingrese el precio: $ ");
-        double precio = AuxFunctions.leerDecimal(sc,sc.nextLine());
+        double precio = AuxFunctions.leerDecimal(sc, sc.nextLine());
         System.out.print("Ingrese el stock: ");
-        int stock = AuxFunctions.leerEntero(sc,sc.nextLine());
+        int stock = AuxFunctions.leerEntero(sc, sc.nextLine());
         Product newProduct = new Product(nombre, stock, precio);
         productos.add(newProduct);
         System.out.print("""
@@ -52,15 +52,15 @@ public class CrudProduct {
 
     public void updateProduct() {
         System.out.print("""
-                    ===========================
-                    === Actualizar producto ===
-                    ===========================
-                   
-                    """);
+                ===========================
+                === Actualizar producto ===
+                ===========================
+                
+                """);
         System.out.print("Ingrese el ID del producto a actualizar: ");
         int id = AuxFunctions.leerEntero(sc, sc.nextLine());
         Product prod = searchById(id);
-        if ( prod != null) {
+        if (prod != null) {
             System.out.printf("Producto ID: %d %n", prod.getId());
             System.out.printf("Nombre: %s. %n Ingrese un nuevo nombre o presione Enter para conservarlo:%n", prod.getName());
             String newName = sc.nextLine().trim();
@@ -91,58 +91,27 @@ public class CrudProduct {
             }
         } else {
             System.out.print("""
-            Producto No Encontrado
-            
-            """);
-        }
-    }
-
-    public Product searchById(int id) {
-        for (Product producto : productos) {
-            if (producto.getId() == id) {
-                return producto;
-            }
-        }
-        return null;
-    }
-
-    public void searchByName() {
-        System.out.print("""
-                    =======================
-                    === Buscar producto ===
-                    =======================
+                    Producto No Encontrado
                     
                     """);
-        System.out.print("Ingrese el nombre del producto: ");
-        String name = sc.nextLine();
-        boolean found = false;
-
-        for (Product producto : productos) {
-            if (Objects.equals(producto.getName(), name)) {
-                producto.info();
-                found = true;
-            }
-        }
-        if (!found) {
-            System.out.println("Producto no encontrado.");
         }
     }
 
     public void deleteProduct() {
         System.out.print("""
-                    =========================
-                    === Eliminar producto ===
-                    =========================
-                    
-                    """);
+                =========================
+                === Eliminar producto ===
+                =========================
+                
+                """);
         System.out.print("Ingrese el ID del producto a eliminar: ");
         int id = AuxFunctions.leerEntero(sc, sc.nextLine());
         Product prod = searchById(id);
         if (prod != null) { // Si el producto existe
             System.out.printf("""
-                            ¿Está seguro que quiere eliminar este producto? %s
-                            Presione [ENTER] para confirmar o cualquier otra tecla para cancelar.
-                            """, prod.getName());
+                    ¿Está seguro que quiere eliminar este producto? %s
+                    Presione [ENTER] para confirmar o cualquier otra tecla para cancelar.
+                    """, prod.getName());
 
             String confirmacion = sc.nextLine().trim();
 
@@ -166,14 +135,78 @@ public class CrudProduct {
         productos.add(producto3);
     }
 
-    public Product search(String name) {
+    public void search() {
+        System.out.print("""
+                =======================
+                === Buscar producto ===
+                =======================
+                
+                1- Por ID
+                2- Por nombre
+                
+                """);
+        int option = AuxFunctions.leerEntero(sc, sc.nextLine());
+        switch (option) {
+            case 1 ->
+                {
+                    System.out.print("Ingrese el ID del producto: ");
+                    int id = AuxFunctions.leerEntero(sc, sc.nextLine());
+                    Product prod = searchById(id);
+                    prod.info();
+                }
+            case 2 ->
+                {
+                    System.out.print("Ingrese el nombre del producto: ");
+
+                    String name = sc.nextLine();
+
+                    ArrayList<Product> encontrados = searchByName(name);
+                    for (Product pr : encontrados) {
+                        pr.info();
+                    }
+                }
+            default->
+                System.out.println("Opción no valida");
+        }
+    }
+
+    public Product searchById(int id) {
         for (Product producto : productos) {
-            if (producto.getName().toLowerCase().contains(name.toLowerCase())) {
-                return producto; // Retorna el producto si hay coincidencia
+            if (producto.getId() == id) {
+                return producto;
             }
         }
-        System.out.println("No se encontró ningún producto con el nombre especificado.");
         return null;
+    }
+
+    public ArrayList<Product> searchByName(String name) {
+
+        String normalizedSearch = normalizerString(name);
+
+        ArrayList<Product> result = new ArrayList<>();
+
+        for (Product producto : productos) {
+            String normalizedProductName = normalizerString(producto.getName());
+
+            if (normalizedProductName.contains(normalizedSearch)) {
+                result.add(producto);
+            }
+        }
+
+        if (result.isEmpty()) {
+            System.out.println("No se encontró ningún producto con el nombre especificado");
+        }
+        return result;
+    }
+
+    public String normalizerString(String cadena) {
+        if (cadena == null) {
+            return "";
+        }
+        // Normalizer me permitió simplificar la búsqueda y reemplazo de letras con acentos
+        String normalized = Normalizer.normalize(cadena, Normalizer.Form.NFD);
+        normalized = normalized.replaceAll("\\p{M}", "");
+        return normalized.toLowerCase();
     }
 
 }

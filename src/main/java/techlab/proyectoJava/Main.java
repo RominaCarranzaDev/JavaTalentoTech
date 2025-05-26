@@ -44,7 +44,7 @@ public class Main {
                 case 2 -> crudProduct.listProducts();
                 case 3 -> crudProduct.updateProduct();
                 case 4 -> crudProduct.deleteProduct();
-                case 5 -> crudProduct.searchByName();
+                case 5 -> crudProduct.search();
                 case 6 -> {
                     nuevaOrden = orden.createPedidos(productos);
                     ordenes.add(nuevaOrden);
